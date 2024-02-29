@@ -13,7 +13,7 @@ builder.Services.AddHostedService<OrderBookService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", conf =>
-        conf.WithOrigins("http://localhost:5500")
+        conf.WithOrigins("https://localhost:44354")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
@@ -35,7 +35,7 @@ app.MapControllers();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapHub<BookOrderHub>("/bookOrderHub");
+    endpoints.MapHub<BookOrderHub>("/orderBookHub");
 });
 
 app.Run();
