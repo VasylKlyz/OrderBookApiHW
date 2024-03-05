@@ -63,11 +63,11 @@ public class OrderBookService : BackgroundService
             {
                 if (book.Amount > 0)
                 {
-                    _bookBid.Add(book);
+                    AddOrUpdate(book, _bookBid);
                 }
                 else if (book.Amount < 0)
                 {
-                    _booksAsk.Add(book);
+                    AddOrUpdate(book, _booksAsk);
                 }
             }
             
@@ -84,6 +84,21 @@ public class OrderBookService : BackgroundService
         await _communicator.Start();
     }
 
+    private void AddOrUpdate(Book newBook, List<Book> books)
+    {
+        var existing = books.FirstOrDefault(x => x.Price == newBook.Price);
+                    
+        if (existing is not null)
+        {
+            existing.Amount = newBook.Amount;
+            existing.Count = newBook.Count;
+        }
+        else
+        {
+            books.Add(newBook);
+        }
+    }
+    
     private Dictionary<string, List<Book>> GetGrouped(List<Book> books)
     {
         var result = books
