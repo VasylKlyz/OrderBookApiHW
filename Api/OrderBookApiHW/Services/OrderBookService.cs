@@ -86,7 +86,7 @@ public class OrderBookService : BackgroundService
 
     private void AddOrUpdate(Book newBook, List<Book> books)
     {
-        var existing = books.FirstOrDefault(x => x.Price == newBook.Price);
+        var existing = books.SingleOrDefault(x => x.Price == newBook.Price);
                     
         if (existing is not null)
         {
@@ -99,15 +99,14 @@ public class OrderBookService : BackgroundService
         }
     }
     
-    private Dictionary<string, List<Book>> GetGrouped(List<Book> books)
+    private Dictionary<string, Book> GetGrouped(List<Book> books)
     {
         var result = books
             .OrderBy(book => book.Price)
-            .GroupBy(book => book.Price)
             .Take(Depth)
             .ToDictionary(
-                group => group.Key.ToString(),
-                group => group.ToList()
+                book => book.Price.ToString(),
+                book => book
             );
         
         return result;

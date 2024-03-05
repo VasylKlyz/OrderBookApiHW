@@ -6,8 +6,8 @@ namespace OrderBookClientHW.Services;
 public class OrderBookHubClientService : IAsyncDisposable
 {
     private HubConnection? _hubConnection;
-    private Dictionary<string, List<Book>> _ordersBookAsk = new Dictionary<string, List<Book>>();
-    private Dictionary<string, List<Book>> _ordersBookBid = new Dictionary<string, List<Book>>();
+    private Dictionary<string, Book> _ordersBookAsk = new Dictionary<string, Book>();
+    private Dictionary<string, Book> _ordersBookBid = new Dictionary<string, Book>();
     private readonly ConnectionStatusService _connectionStatusService;
     private readonly string _hubUrl;
     
@@ -23,7 +23,7 @@ public class OrderBookHubClientService : IAsyncDisposable
             .WithUrl(_hubUrl)
             .Build();
 
-        _hubConnection.On<Dictionary<string, List<Book>>>("ReceiveBookOrderAsk", books =>
+        _hubConnection.On<Dictionary<string, Book>>("ReceiveBookOrderAsk", books =>
         {
             _ordersBookAsk.Clear();
             foreach (var book in books)
@@ -33,7 +33,7 @@ public class OrderBookHubClientService : IAsyncDisposable
             NotifyStateAskChanged();
         });
 
-        _hubConnection.On<Dictionary<string, List<Book>>>("ReceiveBookOrderBid", books =>
+        _hubConnection.On<Dictionary<string,Book>>("ReceiveBookOrderBid", books =>
         {
             _ordersBookBid.Clear();
             foreach (var book in books)
@@ -47,12 +47,12 @@ public class OrderBookHubClientService : IAsyncDisposable
         _connectionStatusService.IsConnected = _hubConnection.State == HubConnectionState.Connected;
     }
 
-    public Dictionary<string, List<Book>> GetAsk()
+    public Dictionary<string, Book> GetAsk()
     {
         return _ordersBookAsk;
     }
 
-    public Dictionary<string, List<Book>> GetBid()
+    public Dictionary<string, Book> GetBid()
     {
         return _ordersBookBid;
     }

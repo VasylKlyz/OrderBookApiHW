@@ -30,10 +30,8 @@
         double totalCost = 0;
         double totalBtc = 0;
 
-        foreach (var askList in asks.Values)
+        foreach (var book in asks.Values)
         {
-            foreach (var book in askList)
-            {
                 if (book.Count == 0) continue;
                 
                 double btcAvailable = book.Amount > 0 ? book.Amount : -book.Amount;
@@ -49,7 +47,6 @@
                     totalCost += btcAvailable * book.Price;
                     totalBtc += btcAvailable;
                 }
-            }
             if (totalBtc >= _btcToBuy) break;
         }
 

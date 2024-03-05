@@ -25,7 +25,7 @@
         
         foreach (var key in bids.Keys)
         {
-            amounts.Add(bids[key].Select(x => x.Amount).Sum());
+            amounts.Add(bids[key].Amount);
             _config.Data.Labels.Add(key);
         }
         

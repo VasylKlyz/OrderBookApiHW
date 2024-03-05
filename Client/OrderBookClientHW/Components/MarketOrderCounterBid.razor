@@ -30,10 +30,8 @@
         double totalRevenue = 0;
         double totalBtc = 0;
 
-        foreach (var bidList in bids.Values.Reverse())
+        foreach (var book in bids.Values.Reverse())
         {
-            foreach (var book in bidList)
-            {
                 if (book.Count == 0) continue;
                 
                 double btcAvailable = book.Amount > 0 ? book.Amount : -book.Amount;
@@ -49,7 +47,6 @@
                     totalRevenue += btcAvailable * book.Price;
                     totalBtc += btcAvailable;
                 }
-            }
             if (totalBtc >= _btcToSell) break;
         }
 
