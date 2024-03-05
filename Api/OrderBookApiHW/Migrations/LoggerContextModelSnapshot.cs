@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using OrderBookApiHW.Data.Context;
+using OrderBookApiHW.Logger.Context;
 
 #nullable disable
 
 namespace OrderBookApiHW.Migrations
 {
     [DbContext(typeof(LoggerContext))]
-    [Migration("20240305025444_InitialCreate")]
-    partial class InitialCreate
+    partial class LoggerContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

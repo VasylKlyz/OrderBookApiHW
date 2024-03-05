@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OrderBookApiHW.Data.Entity;
+using OrderBookApiHW.Logger.Entity;
 
-namespace OrderBookApiHW.Data.Context;
+namespace OrderBookApiHW.Logger.Context;
 
 public class LoggerContext: DbContext
 {

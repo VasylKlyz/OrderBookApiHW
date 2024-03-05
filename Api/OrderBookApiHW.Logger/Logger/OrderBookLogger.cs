@@ -1,8 +1,8 @@
 ﻿using Bitfinex.Client.Websocket.Responses.Books;
-using OrderBookApiHW.Data.Context;
-using OrderBookApiHW.Data.Entity;
+using OrderBookApiHW.Logger.Context;
+using OrderBookApiHW.Logger.Entity;
 
-namespace OrderBookApiHW.Logger;
+namespace OrderBookApiHW.Logger.Logger;
 
 public class OrderBookLogger : IOrderBookLogger
 {

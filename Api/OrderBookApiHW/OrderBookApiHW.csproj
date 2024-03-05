@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers" />
+      <ProjectReference Include="..\OrderBookApiHW.Logger\OrderBookApiHW.Logger.csproj" />
     </ItemGroup>
 
 </Project>

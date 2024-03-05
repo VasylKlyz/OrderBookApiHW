@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using OrderBookApiHW.Data.Context;
 using OrderBookApiHW.Hubs;
 using OrderBookApiHW.Logger;
+using OrderBookApiHW.Logger.Context;
+using OrderBookApiHW.Logger.Logger;
 using OrderBookApiHW.Services;
 
 var builder = WebApplication.CreateBuilder(args);

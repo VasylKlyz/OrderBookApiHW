@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OrderBookApiHW.Data.Entity;
+namespace OrderBookApiHW.Logger.Entity;
 
 public class OrderBookLogsEntity
 {

@@ -5,9 +5,9 @@ using Bitfinex.Client.Websocket.Requests.Subscriptions;
 using Bitfinex.Client.Websocket.Responses.Books;
 using Bitfinex.Client.Websocket.Websockets;
 using Microsoft.AspNetCore.SignalR;
-using OrderBookApiHW.Data.Entity;
 using OrderBookApiHW.Hubs;
 using OrderBookApiHW.Logger;
+using OrderBookApiHW.Logger.Logger;
 
 namespace OrderBookApiHW.Services;
 

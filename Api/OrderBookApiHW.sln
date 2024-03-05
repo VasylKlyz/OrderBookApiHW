@@ -1,11 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderBookApiHW", "OrderBookApiHW\OrderBookApiHW.csproj", "{7FD165BC-4E17-4F9B-9AA7-C5A781F3EE54}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CBF686BB-A52A-4238-806C-71C94908DE40} = {CBF686BB-A52A-4238-806C-71C94908DE40}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{773A5BAC-BC7E-4740-B7FA-A8DEE5318AC1}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderBookApiHW.Logger", "OrderBookApiHW.Logger\OrderBookApiHW.Logger.csproj", "{CBF686BB-A52A-4238-806C-71C94908DE40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,5 +22,9 @@ Global
 		{7FD165BC-4E17-4F9B-9AA7-C5A781F3EE54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FD165BC-4E17-4F9B-9AA7-C5A781F3EE54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FD165BC-4E17-4F9B-9AA7-C5A781F3EE54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBF686BB-A52A-4238-806C-71C94908DE40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBF686BB-A52A-4238-806C-71C94908DE40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBF686BB-A52A-4238-806C-71C94908DE40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBF686BB-A52A-4238-806C-71C94908DE40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
