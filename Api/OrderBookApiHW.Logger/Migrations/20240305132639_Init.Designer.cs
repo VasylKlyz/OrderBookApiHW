@@ -9,11 +9,11 @@ using OrderBookApiHW.Logger.Context;
 
 #nullable disable
 
-namespace OrderBookApiHW.Migrations
+namespace OrderBookApiHW.Logger.Migrations
 {
     [DbContext(typeof(LoggerContext))]
-    [Migration("20240305025444_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240305132639_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace OrderBookApiHW.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("OrderBookApiHW.Data.Entity.OrderBookLogsEntity", b =>
+            modelBuilder.Entity("OrderBookApiHW.Logger.Entity.OrderBookLogsEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

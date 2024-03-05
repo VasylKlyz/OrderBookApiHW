@@ -8,7 +8,7 @@ using OrderBookApiHW.Logger.Context;
 
 #nullable disable
 
-namespace OrderBookApiHW.Migrations
+namespace OrderBookApiHW.Logger.Migrations
 {
     [DbContext(typeof(LoggerContext))]
     partial class LoggerContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace OrderBookApiHW.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("OrderBookApiHW.Data.Entity.OrderBookLogsEntity", b =>
+            modelBuilder.Entity("OrderBookApiHW.Logger.Entity.OrderBookLogsEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
