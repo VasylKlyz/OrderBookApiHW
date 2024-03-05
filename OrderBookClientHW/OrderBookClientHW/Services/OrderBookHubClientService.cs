@@ -9,16 +9,18 @@ public class OrderBookHubClientService : IAsyncDisposable
     private Dictionary<string, List<Book>> _ordersBookAsk = new Dictionary<string, List<Book>>();
     private Dictionary<string, List<Book>> _ordersBookBid = new Dictionary<string, List<Book>>();
     private readonly ConnectionStatusService _connectionStatusService;
+    private readonly string _hubUrl;
     
-    public OrderBookHubClientService(ConnectionStatusService connectionStatusService)
+    public OrderBookHubClientService(ConnectionStatusService connectionStatusService, string hubUrl)
     {
+        _hubUrl = hubUrl;
         _connectionStatusService = connectionStatusService;
     }
     
     public async Task InitializeAsync()
     {
         _hubConnection = new HubConnectionBuilder()
-            .WithUrl("http://localhost:12411/orderBookHub")
+            .WithUrl(_hubUrl)
             .Build();
 
         _hubConnection.On<Dictionary<string, List<Book>>>("ReceiveBookOrderAsk", books =>
