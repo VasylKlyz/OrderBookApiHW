@@ -1,0 +1,9 @@
+﻿services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      MSSQL_SA_PASSWORD: "Test1234!"
+      ACCEPT_EULA: "Y"
+      MSSQL_TCP_PORT: 1433 
+    ports:
+      - "1433:1433"

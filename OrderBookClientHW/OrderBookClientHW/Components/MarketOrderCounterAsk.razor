@@ -1,0 +1,97 @@
+﻿@using OrderBookClientHW.Services
+@inject OrderBookHubClientService OrderBookService
+
+@implements IDisposable
+
+<div>
+    <label for="inputNumber">Enter amount of BTC to buy: </label>
+    <input type="number" id="inputNumber" @bind="_btcToBuy" @bind:event="oninput" />
+</div>
+@if (_btcToBuy > 0)
+{
+    <div>
+        <p>Your price will be: @_price EUR</p>
+        @if (!_isCanBuyThatAmount)
+        {
+            <p>It is not enoght in book order</p>
+        }
+    </div>
+}
+
+
+@code {
+    private double _btcToBuy = 0;
+    private double _price = 0;
+    private bool _isCanBuyThatAmount = true;
+
+    private void CalculateValue()
+    {
+        var asks = OrderBookService.GetAsk();
+        double totalCost = 0;
+        double totalBtc = 0;
+
+        foreach (var askList in asks.Values)
+        {
+            foreach (var book in askList)
+            {
+                if (book.Count == 0) continue;
+                
+                double btcAvailable = book.Amount > 0 ? book.Amount : -book.Amount;
+                if (totalBtc + btcAvailable >= _btcToBuy)
+                {
+                    double btcNeeded = _btcToBuy - totalBtc;
+                    totalCost += btcNeeded * book.Price;
+                    totalBtc += btcNeeded;
+                    break;
+                }
+                else
+                {
+                    totalCost += btcAvailable * book.Price;
+                    totalBtc += btcAvailable;
+                }
+            }
+            if (totalBtc >= _btcToBuy) break;
+        }
+
+        if (totalBtc < _btcToBuy)
+        {
+            _isCanBuyThatAmount = false;
+            _price = 0;
+        }
+        else
+        {
+            _isCanBuyThatAmount = true;
+            _price = totalCost;
+        }
+    }
+
+    private void OnInputNumberChanged(ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), out double result))
+        {
+            _btcToBuy = result;
+            _isCanBuyThatAmount = true;
+            _price = 0;
+            CalculateValue();
+        }
+    }
+    
+    protected override void OnInitialized()
+    {
+        OrderBookService.OnChangeAsk += StateHasChangedHandler;
+    }
+    
+    private async void StateHasChangedHandler()
+    {
+        await InvokeAsync(async () => 
+        {
+            CalculateValue();
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        OrderBookService.OnChangeAsk -= StateHasChangedHandler;
+    }
+}

@@ -5,7 +5,9 @@ using Bitfinex.Client.Websocket.Requests.Subscriptions;
 using Bitfinex.Client.Websocket.Responses.Books;
 using Bitfinex.Client.Websocket.Websockets;
 using Microsoft.AspNetCore.SignalR;
+using OrderBookApiHW.Data.Entity;
 using OrderBookApiHW.Hubs;
+using OrderBookApiHW.Logger;
 
 namespace OrderBookApiHW.Services;
 
@@ -15,14 +17,14 @@ public class OrderBookService : BackgroundService
     private readonly BitfinexWebsocketClient _client;
     private readonly IHubContext<BookOrderHub> _hubContext;
     private const string Pair = "BTC/EUR";
-    private readonly ILogger<OrderBookService> _logger;
     private List<Book> _books;
     private const int Depth = 15;
-
-    public OrderBookService(IHubContext<BookOrderHub> hubContext, ILogger<OrderBookService> logger)
+    private readonly IServiceScopeFactory _scopeFactory;
+    
+    public OrderBookService(IHubContext<BookOrderHub> hubContext, IServiceScopeFactory scopeFactory)
     {
         _hubContext = hubContext;
-        _logger = logger;
+        _scopeFactory = scopeFactory;
         _books = new List<Book>();
         var url = BitfinexValues.ApiWebsocketUrl;
 
@@ -39,8 +41,12 @@ public class OrderBookService : BackgroundService
 
         _client.Streams.BookStream.Subscribe(async book =>
         {
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var logger = scope.ServiceProvider.GetRequiredService<IOrderBookLogger>();
+            
             _books.Add(book);
-
+            logger.Log(book);
+            
             if (book.Count == 0)
             {
                 if (book.Amount == 1)
@@ -52,9 +58,6 @@ public class OrderBookService : BackgroundService
                     _books.RemoveAll(x => x.Price == book.Price && x.Amount < 0);
                 }
             }
-
-            // Console.WriteLine($"pair {book.Pair} period {book.Period} chanId {book.ChanId} amount {book.Amount} rte {book.Rate} count {book.Count} price {book.Price}");
-            //_logger.Log(LogLevel.Information, $"Pair {book.Pair} Period {book.Period} ChanId {book.ChanId} Amount {book.Amount} Rate {book.Rate} Count {book.Count} Price {book.Price} ServerTimestamp {book.ServerTimestamp}");
             else
             {
                 if (book.Amount > 0)

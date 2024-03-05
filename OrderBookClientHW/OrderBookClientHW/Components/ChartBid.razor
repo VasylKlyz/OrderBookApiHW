@@ -1,0 +1,86 @@
+﻿@using OrderBookClientHW.Services
+@using ChartJs.Blazor.BarChart
+@using ChartJs.Blazor.Common
+@using ChartJs.Blazor.Common.Enums
+@using ChartJs.Blazor
+@using ChartJs.Blazor.Util
+@using System.Drawing
+@inject OrderBookHubClientService OrderBookService
+@implements IDisposable
+
+<Chart Config="_config" @ref="_chart"></Chart>
+
+@code {
+    private BarConfig _config;
+    private Chart _chart;
+    
+    private async Task RenderBidChartAsync()
+    {
+        _config.Data.Labels.Clear();
+        _config.Data.Datasets.Clear();
+        
+        var bids = OrderBookService.GetBid();
+
+        var amounts = new List<double>();
+        
+        foreach (var key in bids.Keys.Reverse())
+        {
+            amounts.Add(bids[key].Select(x => x.Amount).Sum());
+            _config.Data.Labels.Add(key);
+        }
+        
+        IDataset<double> dataset = new BarDataset<double>(amounts)
+        {
+            Label = "bid",
+            BackgroundColor = ColorUtil.FromDrawingColor(Color.Green)
+        };
+
+        _config.Data.Datasets.Add(dataset);
+        
+        await _chart.Update();
+    }
+
+    protected override void OnInitialized()
+    {
+        _config = new BarConfig
+        {
+            Options = new BarOptions
+            {
+                Responsive = true,
+                Legend = new Legend
+                {
+                    Position = Position.Top
+                },
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Bid"
+                },
+                Animation = new Animation
+                {
+                    Duration = 0
+                },
+                Tooltips = new Tooltips
+                {
+                    Enabled = false
+                },
+            }
+        };
+        
+        OrderBookService.OnChangeBid += StateHasChangedHandler;
+    }
+    
+    private async void StateHasChangedHandler()
+    {
+        await InvokeAsync(async () => 
+        {
+            await RenderBidChartAsync();
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        OrderBookService.OnChangeBid -= StateHasChangedHandler;
+    }
+}

@@ -1,0 +1,49 @@
+﻿@using OrderBookClientHW.Services
+@using System.ComponentModel
+@inherits LayoutComponentBase
+@inject ConnectionStatusService ConnectionStatus
+@implements IDisposable
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu/>
+    </div>
+
+    <main>
+
+        <div class="top-row px-4">
+            @if (_connectionStatus)
+            {
+                <div style="display: flex; align-items: center"><span class="dot" style="background-color: green" />Connected</div>
+            }
+            else
+            {
+                <div style="display: flex; align-items: center"><span class="dot" style="background-color: red" />Disconnected</div>
+            }
+        </div>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    private bool _connectionStatus;
+
+    protected override void OnInitialized()
+    {
+        _connectionStatus = ConnectionStatus.IsConnected;
+        ConnectionStatus.OnChange += StateHasChangedHandler;
+    }
+
+    private void StateHasChangedHandler()
+    {
+        _connectionStatus = ConnectionStatus.IsConnected;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ConnectionStatus.OnChange -= StateHasChangedHandler;
+    }
+}

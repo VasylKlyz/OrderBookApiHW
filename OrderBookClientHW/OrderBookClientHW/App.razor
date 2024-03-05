@@ -1,0 +1,38 @@
+﻿@using OrderBookClientHW.Services
+@inject OrderBookHubClientService OrderBookService
+
+@code {
+    private bool _isInitialized = false;
+
+    private async Task InitializeAppAsync()
+    {
+        await OrderBookService.InitializeAsync();
+        _isInitialized = true;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitializeAppAsync();
+    }
+
+}
+
+@if (_isInitialized)
+{
+    <Router AppAssembly="@typeof(Program).Assembly">
+        <Found Context="routeData">
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p>Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+}
+else
+{
+    <p>Initializing application...</p>
+}

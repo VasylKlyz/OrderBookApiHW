@@ -1,0 +1,11 @@
+﻿@using OrderBookClientHW.Services
+@inject OrderBookHubClientService OrderBookService
+@inject NavigationManager Navigation
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await OrderBookService.InitializeAsync();
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+    }
+}

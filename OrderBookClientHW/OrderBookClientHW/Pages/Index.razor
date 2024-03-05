@@ -1,0 +1,23 @@
+﻿@page "/"
+@using OrderBookClientHW.Components
+
+<PageTitle>BTC/EUR</PageTitle>
+<h3>BTC/EUR</h3>
+<div style="display: flex; ">
+    <div style="width: 50%">
+        <ChartBid/>
+    </div>
+    <div style="width: 50%">
+        <ChartAsk/>
+    </div>
+</div>
+<div>
+    <MarketOrderCounterAsk/>
+</div>
+<div>
+    <MarketOrderCounterBid/>
+</div>
+
+@code {
+
+}
