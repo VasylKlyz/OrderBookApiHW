@@ -84,9 +84,9 @@ public class OrderBookService : BackgroundService
         await _communicator.Start();
     }
 
-    private Dictionary<string, List<Book>> GetGrouped(List<Book> _books)
+    private Dictionary<string, List<Book>> GetGrouped(List<Book> books)
     {
-        var result = _books
+        var result = books
             .OrderBy(book => book.Price)
             .GroupBy(book => book.Price)
             .Take(Depth)
