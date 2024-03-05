@@ -23,7 +23,7 @@
 
         var amounts = new List<double>();
         
-        foreach (var key in bids.Keys.Reverse())
+        foreach (var key in bids.Keys)
         {
             amounts.Add(bids[key].Select(x => x.Amount).Sum());
             _config.Data.Labels.Add(key);

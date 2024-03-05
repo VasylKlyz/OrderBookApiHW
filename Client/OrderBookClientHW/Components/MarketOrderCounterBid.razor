@@ -30,7 +30,7 @@
         double totalRevenue = 0;
         double totalBtc = 0;
 
-        foreach (var bidList in bids.Values)
+        foreach (var bidList in bids.Values.Reverse())
         {
             foreach (var book in bidList)
             {
