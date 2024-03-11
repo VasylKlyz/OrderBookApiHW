@@ -25,7 +25,7 @@
 
     <div class="form-group">
         <label for="textInput">Enter Date:</label>
-        <InputText id="textInput" placeholder="DD-MM-YYYY" class="form-control" @bind-Value="_dateTimeInput" />
+        <InputText id="textInput" placeholder="YYYY-MM-DD" class="form-control" @bind-Value="_dateTimeInput" />
     </div>
     
     <button class="btn btn-primary" @onclick="OnLoadClick">Load</button>
@@ -49,8 +49,8 @@
     {
         var bookHistory = await OrderBookHistoryService.GetHistory(_selectedDate);
 
-        await RenderBidChartAsync(bookHistory.Asks);
-        await RenderAskChartAsync(bookHistory.Bids);
+        await RenderBidChartAsync(bookHistory.Bids);
+        await RenderAskChartAsync(bookHistory.Asks);
     }
     
     private async Task RenderBidChartAsync(Dictionary<string, Book> bids)
