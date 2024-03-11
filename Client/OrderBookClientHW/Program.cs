@@ -7,7 +7,14 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddScoped(sp =>
+{
+    var config = sp.GetService<IConfiguration>();
+    var url = config["BaseApiUrl"];
+
+    return new HttpClient { BaseAddress = new Uri(url) };
+});
+
 builder.Services.AddSingleton<ConnectionStatusService>();
 builder.Services.AddSingleton<OrderBookHubClientService>(sp => {
     var config = sp.GetService<IConfiguration>();
@@ -15,5 +22,7 @@ builder.Services.AddSingleton<OrderBookHubClientService>(sp => {
     var url = config["OrderBookHub:Url"];
     return new OrderBookHubClientService(connectionStatusService, url);
 });
+
+builder.Services.AddScoped<OrderBookHistoryService>();
 
 await builder.Build().RunAsync();

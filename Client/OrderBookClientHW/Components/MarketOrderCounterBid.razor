@@ -33,8 +33,8 @@
         foreach (var book in bids.Values.Reverse())
         {
                 if (book.Count == 0) continue;
-                
-                double btcAvailable = book.Amount > 0 ? book.Amount : -book.Amount;
+
+                double btcAvailable = book.Amount;
                 if (totalBtc + btcAvailable >= _btcToSell)
                 {
                     double btcNeeded = _btcToSell - totalBtc;

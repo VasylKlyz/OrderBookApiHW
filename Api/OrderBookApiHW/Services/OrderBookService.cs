@@ -6,7 +6,6 @@ using Bitfinex.Client.Websocket.Responses.Books;
 using Bitfinex.Client.Websocket.Websockets;
 using Microsoft.AspNetCore.SignalR;
 using OrderBookApiHW.Hubs;
-using OrderBookApiHW.Logger;
 using OrderBookApiHW.Logger.Logger;
 
 namespace OrderBookApiHW.Services;
@@ -19,6 +18,8 @@ public class OrderBookService : BackgroundService
     private const string Pair = "BTC/EUR";
     private List<Book> _bookBid;
     private List<Book> _booksAsk;
+    
+    // Amount of taken books for both bids and asks
     private const int Depth = 15;
     private readonly IServiceScopeFactory _scopeFactory;
     
@@ -48,6 +49,16 @@ public class OrderBookService : BackgroundService
             
             logger.Log(book);
             
+            // Those logic goes from the documentation to keep trading book instance updated
+            /*
+             * Algorithm to create and keep a trading book instance updated
+             *   when count > 0 then you have to add or update the price level
+             *   3.1 if amount > 0 then add/update bids
+             *   3.2 if amount < 0 then add/update asks
+             *   when count = 0 then you have to delete the price level.
+             *   4.1 if amount = 1 then remove from bids
+             *   4.2 if amount = -1 then remove from asks
+             */
             if (book.Count == 0)
             {
                 if (book.Amount == 1)
@@ -71,6 +82,7 @@ public class OrderBookService : BackgroundService
                 }
             }
             
+            // Notify all subscribers with current bid or ask
             if (book.Amount > 0)
             {
                 await _hubContext.Clients.All.SendAsync("ReceiveBookOrderBid", GetGrouped(_bookBid), cancellationToken: stoppingToken);
@@ -84,6 +96,11 @@ public class OrderBookService : BackgroundService
         await _communicator.Start();
     }
 
+    /// <summary>
+    /// Add to the book new value in case we do not have it. Update current if we have.
+    /// </summary>
+    /// <param name="newBook"></param>
+    /// <param name="books"></param>
     private void AddOrUpdate(Book newBook, List<Book> books)
     {
         var existing = books.SingleOrDefault(x => x.Price == newBook.Price);
@@ -99,6 +116,7 @@ public class OrderBookService : BackgroundService
         }
     }
     
+    // Group Book by prices
     private Dictionary<string, Book> GetGrouped(List<Book> books)
     {
         var result = books

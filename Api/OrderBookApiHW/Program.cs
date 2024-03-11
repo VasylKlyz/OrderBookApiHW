@@ -1,20 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using OrderBookApiHW.Hubs;
-using OrderBookApiHW.Logger;
 using OrderBookApiHW.Logger.Context;
 using OrderBookApiHW.Logger.Logger;
+using OrderBookApiHW.Logger.Registration;
 using OrderBookApiHW.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure services and policy
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
-builder.Services.AddHostedService<OrderBookService>();
 
+builder.Services.AddHostedService<OrderBookService>();
 builder.Services.AddScoped<IOrderBookLogger, OrderBookLogger>();
+builder.Services.AddScoped<IOrderBookHistoryService, OrderBookHistoryService>();
 
 builder.Services.AddCors(options =>
 {
@@ -29,8 +30,8 @@ builder.Services.AddDbContext<LoggerContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
+// Setup application
 var app = builder.Build();
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -44,22 +45,11 @@ app.UseRouting();
 
 app.MapControllers();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapHub<BookOrderHub>("/orderBookHub");
-});
+app.MapHub<BookOrderHub>("/orderBookHub");
 
+// Apply migration 
 var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
-try
-{
-    var context = services.GetRequiredService<LoggerContext>();
-    context.Database.Migrate();
-}
-catch (Exception ex)
-{
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An error occurred while migrating the database.");
-}
+Registration.Migrate(services);
 
 app.Run();

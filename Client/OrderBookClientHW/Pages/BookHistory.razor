@@ -1,0 +1,172 @@
+﻿@page "/BookHistory"
+@using OrderBookClientHW.Services
+@using ChartJs.Blazor.BarChart
+@using ChartJs.Blazor.Common
+@using ChartJs.Blazor.Util
+@using ChartJs.Blazor
+@using System.Drawing
+@using Bitfinex.Client.Websocket.Responses.Books
+@using ChartJs.Blazor.Common.Enums
+@inject OrderBookHistoryService OrderBookHistoryService
+<h3>BookHistory</h3>
+
+<div style="display: flex; ">
+    <div style="width: 50%">
+        <Chart Config="_configBid" @ref="_chartBid"></Chart>
+    </div>
+    <div style="width: 50%">
+        <Chart Config="_configAsk" @ref="_chartAsk"></Chart>
+    </div>
+</div>
+
+<EditForm Model="@this">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="textInput">Enter Date:</label>
+        <InputText id="textInput" placeholder="DD-MM-YYYY" class="form-control" @bind-Value="_dateTimeInput" />
+    </div>
+    
+    <button class="btn btn-primary" @onclick="OnLoadClick">Load</button>
+</EditForm>
+@code {
+    private BarConfig _configAsk;
+    private BarConfig _configBid;
+    private Chart _chartAsk;
+    private Chart _chartBid;
+    private string _dateTimeInput = "";
+    private DateTime _selectedDate = DateTime.Now;
+    
+  
+    private async Task OnLoadClick()
+    {
+        _selectedDate = DateTime.Parse(_dateTimeInput);
+        await RenderChartsAsync();
+    }
+    
+    private async Task RenderChartsAsync()
+    {
+        var bookHistory = await OrderBookHistoryService.GetHistory(_selectedDate);
+
+        await RenderBidChartAsync(bookHistory.Asks);
+        await RenderAskChartAsync(bookHistory.Bids);
+    }
+    
+    private async Task RenderBidChartAsync(Dictionary<string, Book> bids)
+    {
+        _configBid.Data.Labels.Clear();
+        _configBid.Data.Datasets.Clear();
+    
+        var sortedBids = bids.OrderByDescending(kvp => kvp.Key); // Sorting bids by price in descending order
+
+        var cumulativeAmounts  = new List<double>();
+        double cumulativeAmount = 0;
+        
+        foreach (var bid in sortedBids)
+        {
+            // Summing the amounts for cumulative depth
+            cumulativeAmount += bid.Value.Amount;
+            cumulativeAmounts.Add(cumulativeAmount);
+            
+            _configBid.Data.Labels.Add(bid.Key);
+        }
+
+        cumulativeAmounts.Reverse();
+        
+        IDataset<double> dataset = new BarDataset<double>(cumulativeAmounts)
+        {
+            Label = "Bid",
+            BackgroundColor = ColorUtil.FromDrawingColor(Color.Green)
+        };
+
+        _configBid.Data.Datasets.Add(dataset);
+    
+        await _chartBid.Update();
+    }
+    
+    private async Task RenderAskChartAsync(Dictionary<string, Book> asks)
+    {
+        _configAsk.Data.Labels.Clear();
+        _configAsk.Data.Datasets.Clear();
+        
+        var sortedAsks = asks.OrderBy(kvp => kvp.Key);
+        double cumulativeAmount = 0;
+        var cumulativeAmounts  = new List<double>();
+
+        foreach (var ask in sortedAsks)
+        {
+            // Summing the amounts for cumulative depth
+            cumulativeAmount += ask.Value.Amount; 
+            cumulativeAmounts.Add(cumulativeAmount);
+            
+            _configAsk.Data.Labels.Add(ask.Key);
+        }
+
+        IDataset<double> dataset = new BarDataset<double>(cumulativeAmounts)
+        {
+            Label = "ask",
+            BackgroundColor = ColorUtil.FromDrawingColor(Color.Red)
+        };
+
+        _configAsk.Data.Datasets.Add(dataset);
+        
+        await _chartAsk.Update();
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _configAsk = new BarConfig
+        {
+            Options = new BarOptions
+            {
+                Responsive = true,
+                Legend = new Legend
+                {
+                    Position = Position.Top
+                },
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Ask"
+                },
+                Animation = new Animation
+                {
+                    Duration = 0
+                },
+                Tooltips = new Tooltips
+                {
+                    Enabled = false
+                },
+            }
+        };
+        
+        _configBid = new BarConfig
+        {
+            Options = new BarOptions
+            {
+                Responsive = true,
+                Legend = new Legend
+                {
+                    Position = Position.Top
+                },
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Bid"
+                },
+                Animation = new Animation
+                {
+                    Duration = 0
+                },
+                Tooltips = new Tooltips
+                {
+                    Enabled = false
+                },
+            }
+        };
+
+        await RenderChartsAsync();
+    }
+    
+}

@@ -1,4 +1,5 @@
 ﻿@using OrderBookClientHW.Services
+@using OrderBookClientHW.Pages
 @inject OrderBookHubClientService OrderBookService
 
 @code {
@@ -22,6 +23,7 @@
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
             <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(BookHistory)"/>
             <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
         </Found>
         <NotFound>

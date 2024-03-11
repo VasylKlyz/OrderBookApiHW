@@ -32,9 +32,10 @@
 
         foreach (var book in asks.Values)
         {
-                if (book.Count == 0) continue;
+                // Make amount positive because asks is negative
+                double btcAvailable = -book.Amount;
                 
-                double btcAvailable = book.Amount > 0 ? book.Amount : -book.Amount;
+                // check if we do not fill 
                 if (totalBtc + btcAvailable >= _btcToBuy)
                 {
                     double btcNeeded = _btcToBuy - totalBtc;
