@@ -5,11 +5,11 @@
 <h3>BTC/EUR</h3>
 <div style="display: flex; ">
     <div style="width: 50%">
-        <ChartBid/>
+        <ChartBidAmount/>
     </div>
     <div style="width: 50%">
-        <ChartAsk/>
-    </div>
+        <ChartAskAmount/>
+        </div>
 </div>
 <div>
     <MarketOrderCounterAsk/>
@@ -19,5 +19,7 @@
 </div>
 
 @code {
-
+    // I was trying to concat bids and asks in one chart to show depth.
+    // But there is issue, current chart library have some sorting which I can not turn off, so it looks not good with the data.
+    // Thank you for understanding.
 }

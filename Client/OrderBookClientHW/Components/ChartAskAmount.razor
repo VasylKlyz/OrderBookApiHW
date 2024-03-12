@@ -21,20 +21,15 @@
         
         var asks = OrderBookService.GetAsk();
 
+        var amounts = new List<double>();
         
-        var sortedAsks = asks.OrderBy(kvp => kvp.Key);
-        double cumulativeAmount = 0;
-        var cumulativeAmounts  = new List<double>();
-
-        foreach (var ask in sortedAsks)
+        foreach (var key in asks.Keys)
         {
-            cumulativeAmount += ask.Value.Amount; 
-            cumulativeAmounts.Add(cumulativeAmount);
-            
-            _config.Data.Labels.Add(ask.Key);
+            amounts.Add(-asks[key].Amount);
+            _config.Data.Labels.Add(key);
         }
 
-        IDataset<double> dataset = new BarDataset<double>(cumulativeAmounts)
+        IDataset<double> dataset = new BarDataset<double>(amounts)
         {
             Label = "ask",
             BackgroundColor = ColorUtil.FromDrawingColor(Color.Red)

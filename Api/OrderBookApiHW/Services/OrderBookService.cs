@@ -20,7 +20,7 @@ public class OrderBookService : BackgroundService
     private List<Book> _booksAsk;
     
     // Amount of taken books for both bids and asks
-    private const int Depth = 15;
+    private const int Depth = 20;
     private readonly IServiceScopeFactory _scopeFactory;
     
     public OrderBookService(IHubContext<BookOrderHub> hubContext, IServiceScopeFactory scopeFactory)
